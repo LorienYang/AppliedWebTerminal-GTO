@@ -111,8 +111,11 @@ data class MEStack(
             get() = MEStack(this.what.serializable(), this.amount)
         val KeyCounter.meStacks: List<MEStack>
             get() {
-                println(this)
-                return this.map { MEStack(it.key.serializable(), it.longValue) }
+                val result = mutableListOf<MEStack>()
+                this.keySet().forEach { key ->
+                    result += MEStack(key.serializable(), this.get(key))
+                }
+                return result
             }
     }
 }

@@ -178,7 +178,12 @@ fun Application.configureAEServiceRouting() {
                 val grid = AENetworkSupport.getGrid(principal.uuid)
                     ?: return@get call.respond<List<MEStack>>(listOf())
                 val craftables = grid.craftingService.getCraftables(AEKeyFilter.none())
-                val meStacks = grid.storageService.cachedInventory.meStacks.toMutableList()
+                val inventory = grid.storageService.inventory
+                val keyCounter = inventory.availableStacks
+                val meStacks = mutableListOf<MEStack>()
+                keyCounter.keySet().forEach { key ->
+                    meStacks += MEStack(key.serializable(), keyCounter.get(key))
+                }
 
                 val storageHashSet = meStacks.associateBy { it.what.myHash() }
                 craftables.forEach {
